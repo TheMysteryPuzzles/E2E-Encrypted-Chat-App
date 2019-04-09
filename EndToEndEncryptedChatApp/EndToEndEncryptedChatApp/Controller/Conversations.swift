@@ -1,10 +1,4 @@
-//
-//  Conversations.swift
-//  Saini
-//
-//  Created by Rohit Saini on 03/09/18.
-//  Copyright © 2018 SainiSaab. All rights reserved.
-//
+//  Copyright © 2019 TheMysteryPuzzles. All rights reserved.
 
 import UIKit
 

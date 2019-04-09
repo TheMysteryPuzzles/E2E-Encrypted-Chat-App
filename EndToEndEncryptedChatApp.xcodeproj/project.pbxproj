@@ -30,6 +30,7 @@
 		9629D709225146D900A7433A /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629D6F9225146D900A7433A /* Conversation.swift */; };
 		9629D70A225146D900A7433A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629D6FA225146D900A7433A /* User.swift */; };
 		96BAB7CF225279DC00C8F524 /* ChatModuleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BAB7CE225279DC00C8F524 /* ChatModuleViewController.swift */; };
+		96DCE05D225D126E0059EA8F /* Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DCE05C225D126E0059EA8F /* Encryption.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		9629D6F9225146D900A7433A /* Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
 		9629D6FA225146D900A7433A /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		96BAB7CE225279DC00C8F524 /* ChatModuleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModuleViewController.swift; sourceTree = "<group>"; };
+		96DCE05C225D126E0059EA8F /* Encryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryption.swift; sourceTree = "<group>"; };
 		E1938A319099574BB9954137 /* Pods-D3RealTimeChatModule.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-D3RealTimeChatModule.debug.xcconfig"; path = "Pods/Target Support Files/Pods-D3RealTimeChatModule/Pods-D3RealTimeChatModule.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -157,6 +159,7 @@
 		9629D6F7225146D900A7433A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				96DCE05C225D126E0059EA8F /* Encryption.swift */,
 				9629D6F8225146D900A7433A /* Messages.swift */,
 				9629D6F9225146D900A7433A /* Conversation.swift */,
 				9629D6FA225146D900A7433A /* User.swift */,
@@ -346,6 +349,7 @@
 				9629D704225146D900A7433A /* ChatCells.swift in Sources */,
 				9629D6FF225146D900A7433A /* Chat.swift in Sources */,
 				9629D709225146D900A7433A /* Conversation.swift in Sources */,
+				96DCE05D225D126E0059EA8F /* Encryption.swift in Sources */,
 				9629D70A225146D900A7433A /* User.swift in Sources */,
 				9629D708225146D900A7433A /* Messages.swift in Sources */,
 				9629D700225146D900A7433A /* ContactList.swift in Sources */,

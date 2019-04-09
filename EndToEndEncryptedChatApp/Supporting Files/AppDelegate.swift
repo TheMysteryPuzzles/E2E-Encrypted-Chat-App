@@ -7,7 +7,7 @@
 import UIKit
 import Firebase
 
-var realTimeDataBaseReference = "https://chatmodule-2a4da.firebaseio.com/"
+var realTimeDataBaseReference = ""
 var topPadding = 0.0
 var bottomPadding = 0.0
 @UIApplicationMain

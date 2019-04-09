@@ -1,10 +1,7 @@
-//
-//  MarkerView.swift
-//  Saini
-//
-//  Created by Rohit Saini on 16/07/18.
-//  Copyright © 2018 SainiSaab. All rights reserved.
-//
+//  Copyright © 2019 TheMysteryPuzzles. All rights reserved.
+
+
+
 
 import UIKit
 
