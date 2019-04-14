@@ -78,10 +78,9 @@ class ContactList: UIViewController,UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Selected")
-    
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let Chat = storyBoard.instantiateViewController(withIdentifier: "Chat") as! Chat
-        Chat.currentUser = self.UsersArr[indexPath.row]
+        Chat.selectedRecipient = self.UsersArr[indexPath.row]
         self.navigationController?.pushViewController(Chat, animated: true)
     }
     

@@ -37,6 +37,7 @@ class ChatModuleViewController: UIViewController {
     
     override func viewDidLoad() {
        super.viewDidLoad()
+       //performLogout()
         self.title = "Chats"
           self.navigationController!.navigationBar.barStyle = .black
          self.navigationController!.navigationBar.isTranslucent = true
@@ -73,6 +74,7 @@ class ChatModuleViewController: UIViewController {
         Conversation.showConversations { (conversations) in
             self.items = conversations
             self.items.sort{ $0.lastMessage.timestamp > $1.lastMessage.timestamp }
+            
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 for conversation in self.items {
@@ -150,7 +152,7 @@ extension ChatModuleViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let Chat = storyBoard.instantiateViewController(withIdentifier: "Chat") as! Chat
-        Chat.currentUser = self.items[indexPath.row].user
+        Chat.selectedRecipient = self.items[indexPath.row].user
         self.navigationController?.pushViewController(Chat, animated: true)
         
       

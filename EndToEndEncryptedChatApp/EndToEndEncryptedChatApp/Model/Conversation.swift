@@ -20,10 +20,10 @@ class Conversation {
                     let values = snapshot.value as! [String: String]
                     let location = values["location"]!
                     User.info(forUserID: fromID, completion: { (user) in
-                        let emptyMessage = Message.init(type: .text, content: "loading", owner: .sender, timestamp: 0, isRead: true)
+                        let emptyMessage = Message.init(type: .text, content: "loading", owner: .sender, timestamp: 0, isRead: true, toID: nil, fromID: nil)
                         let conversation = Conversation.init(user: user, lastMessage: emptyMessage)
                         conversations.append(conversation)
-                        conversation.lastMessage.downloadLastMessage(forLocation: location, completion: {
+                        conversation.lastMessage.downloadLastMessage(fromId: fromID, forLocation: location, completion: {
                             completion(conversations)
                         })
                     })

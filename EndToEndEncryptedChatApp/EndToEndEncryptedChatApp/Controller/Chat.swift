@@ -8,10 +8,18 @@ import Photos
 class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,  UINavigationControllerDelegate, UIImagePickerControllerDelegate{
     
     
+    var pValue: Int?
+    var gValue: Int?
+    let currentUserId = Auth.auth().currentUser?.uid
+    var encryptedMessage: Data?
+    var diffieHelman = DeffieHelmanKeyExchange()
+    
     @IBOutlet var inputBar: UIView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var inputTextField: UITextField!
-    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+
+    @IBOutlet weak var bottomConstraint: UITableView!
+    
      var topAnchorContraint: NSLayoutConstraint!
     
    
@@ -68,18 +76,15 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
     }
     
     
-    
-  
-    
     override var canBecomeFirstResponder: Bool{
         return true
     }
     
-  
     var items = [Message]()
     let imagePicker = UIImagePickerController()
     let barHeight: CGFloat = 50
-    var currentUser: User?
+    var selectedRecipient: User?
+    var encryptedContent: Data?
 
     
     //MARK: Methods
@@ -89,22 +94,27 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.contentInset.bottom = self.barHeight
         self.tableView.scrollIndicatorInsets.bottom = self.barHeight
-        self.navigationItem.title = self.currentUser?.name
+        self.navigationItem.title = self.selectedRecipient?.name
     }
     
     //Downloads messages
     func fetchData() {
-        Message.downloadAllMessages(forUserID: self.currentUser!.id, completion: {[weak weakSelf = self] (message) in
-            weakSelf?.items.append(message)
-            weakSelf?.items.sort{ $0.timestamp < $1.timestamp }
-            DispatchQueue.main.async {
-                if let state = weakSelf?.items.isEmpty, state == false {
-                    weakSelf?.tableView.reloadData()
-                    weakSelf?.tableView.scrollToRow(at: IndexPath.init(row: self.items.count - 1, section: 0), at: .bottom, animated: false)
+        
+        Message.downloadAllMessages(forUserID: self.selectedRecipient!.id, completion: {[weak weakSelf = self] (message) in
+          
+            message.decryptTextMessageFor(withEncryptedText: message.content as! String, completionHandler: {
+                weakSelf?.items.append(message)
+                weakSelf?.items.sort{ $0.timestamp < $1.timestamp }
+                DispatchQueue.main.async {
+                    if let state = weakSelf?.items.isEmpty, state == false {
+                        weakSelf?.tableView.reloadData()
+                        weakSelf?.tableView.scrollToRow(at: IndexPath.init(row: self.items.count - 1, section: 0), at: .bottom, animated: false)
+                    }
                 }
-            }
+            })
+
         })
-        Message.markMessagesRead(forUserID: self.currentUser!.id)
+        Message.markMessagesRead(forUserID: self.selectedRecipient!.id)
     }
     
     //Hides current viewcontroller
@@ -115,8 +125,9 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
     }
     
     func composeMessage(type: MessageType, content: Any)  {
-        let message = Message.init(type: type, content: content, owner: .sender, timestamp: Int(Date().timeIntervalSince1970), isRead: false)
-        Message.send(message: message, toID: self.currentUser!.id, completion: {(_) in
+        
+        let message = Message.init(type: type, content: content, owner: .sender, timestamp: Int(Date().timeIntervalSince1970), isRead: false, toID: nil, fromID: nil)
+        Message.send(message: message, toID: self.selectedRecipient!.id, completion: {(_) in
         })
     }
     
@@ -135,12 +146,12 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
     func animateExtraButtons(toHide: Bool)  {
         switch toHide {
         case true:
-            self.bottomConstraint.constant = 0
+            //self.bottomConstraints.constant = 0
             UIView.animate(withDuration: 0.3) {
                 self.inputBar.layoutIfNeeded()
             }
         default:
-            self.bottomConstraint.constant = -50
+           // self.bottomConstraints.constant = -50
             UIView.animate(withDuration: 0.3) {
                 self.inputBar.layoutIfNeeded()
             }
@@ -180,7 +191,10 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
     @IBAction func sendMessage(_ sender: Any) {
         if let text = self.inputTextField.text {
             if text.count > 0 {
-                self.composeMessage(type: .text, content: self.inputTextField.text!)
+                
+                let messageText = self.inputTextField.text!
+                
+                encrptAndComposeTextMessageFor(thisRecipient: self.selectedRecipient!.id, withText: messageText)
                 self.inputTextField.text = ""
             }
         }
@@ -241,7 +255,7 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
         case .sender:
             let cell = tableView.dequeueReusableCell(withIdentifier: "Sender", for: indexPath) as! SenderCell
             cell.clearCellData()
-            cell.profilePic.image = self.currentUser?.profilePic
+            cell.profilePic.image = self.selectedRecipient?.profilePic
             switch self.items[indexPath.row].type {
             case .text:
                 cell.message.text = self.items[indexPath.row].content as! String
@@ -308,7 +322,7 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
-        Message.markMessagesRead(forUserID: self.currentUser!.id)
+        Message.markMessagesRead(forUserID: self.selectedRecipient!.id)
     }
     
     
@@ -330,5 +344,120 @@ class Chat: UIViewController,UITableViewDelegate, UITableViewDataSource, UITextF
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+}
+
+
+extension Chat {
+    fileprivate  func encryptText(text: String) {
+        
+        Database.database().reference(fromURL: "https://chatmodule-2a4da.firebaseio.com/").child("users").child((selectedRecipient?.id)! + "/credentials").observeSingleEvent(of: .value) { (userSnapshot) in
+            if userSnapshot.exists(){
+                let userCredentials = userSnapshot.value as! [String:Any]
+                let receiptPublicKey = userCredentials["publicKey"] as! Int
+                print("ReceiptPublic: \(receiptPublicKey)")
+                let privateKey = UserDefaults.standard.integer(forKey: self.currentUserId!)
+                print("Private: \(privateKey)")
+                
+                let sharedSecrect = self.diffieHelman.compute_exp_modulo(primitiveRoot: receiptPublicKey, privateKey: privateKey, prime: self.pValue!)
+                print("\(sharedSecrect)")
+                let cryptionPassword = String(sharedSecrect)
+                self.encrypt(text: text, sharedSecrect: cryptionPassword)
+            }
+        }
+    }
+    
+    
+    func encrypt(text: String,sharedSecrect: String){
+        
+        let salt = "foo"
+        let generateAESKey = try? AES256Cryption.createKey(password: sharedSecrect.data(using: .utf8)!, salt: salt.data(using: .utf8)!)
+        
+        var iv: Data
+        if UserDefaults.standard.data(forKey: "iv") == nil {
+            iv = AES256Cryption.randomIv()
+            UserDefaults.standard.set(iv, forKey: "iv")
+        }else{
+            iv = UserDefaults.standard.data(forKey: "iv")!
+        }
+        let aes = try! AES256Cryption(key: generateAESKey!, iv: iv)
+        let message = text
+        let digest = message.data(using: .utf8)!
+        self.encryptedMessage = try! aes.encrypt(digest)
+        self.composeMessage(type: .text, content:  self.encryptedMessage!.hexString)
+        
+        
+    }
+    
+    
+    func encrptAndComposeTextMessageFor(thisRecipient recipientId: String, withText text: String){
+        
+        if UserDefaults.standard.value(forKey: "pValue") == nil {
+            Database.database().reference(fromURL: "https://chatmodule-2a4da.firebaseio.com/").child("DHParameters").observeSingleEvent(of: .value) {
+                (dhParameters) in
+                if dhParameters.exists() {
+                    let paramters = dhParameters.value as! [String:Int]
+                    self.pValue = paramters["pValue"]!
+                    self.gValue = paramters["gValue"]!
+                    
+                    UserDefaults.standard.set(self.pValue, forKey: "pValue")
+                    UserDefaults.standard.set(self.gValue, forKey: "gValue")
+                    self.encryptText(text: text)
+                }
+            }
+        }else{
+            self.pValue = UserDefaults.standard.value(forKey: "pValue") as! Int
+            self.gValue = UserDefaults.standard.value(forKey: "gValue") as! Int
+            encryptText(text: text)
+            
+        }
+        
+    }
+    
+}
+
+
+
+
+
+extension Data {
+    var hexString: String {
+        return map { String(format: "%02hhx", $0) }.joined()
+    }
+    
+    private static let hexAlphabet = "0123456789abcdef".unicodeScalars.map { $0 }
+    
+    public func hexEncodedString() -> String {
+        return String(self.reduce(into: "".unicodeScalars, { (result, value) in
+            result.append(Data.hexAlphabet[Int(value/16)])
+            result.append(Data.hexAlphabet[Int(value%16)])
+        }))
+    }
+    
+}
+
+
+extension String {
+    func transformingFromHex() -> String? {
+        return "&#x\(self);".applyingTransform(.toXMLHex, reverse: true)
+    }
+    
+    func convertToData() -> Data {
+        var hex = self
+        var data = Data()
+        while(hex.count > 0) {
+            let subIndex = hex.index(hex.startIndex, offsetBy: 2)
+            let c = String(hex[..<subIndex])
+            hex = String(hex[subIndex...])
+            var ch: UInt32 = 0
+            Scanner(string: c).scanHexInt32(&ch)
+            var char = UInt8(ch)
+            data.append(&char, count: 1)
+        }
+        return data
+    }
+    
+    
+    
+    
 }
 

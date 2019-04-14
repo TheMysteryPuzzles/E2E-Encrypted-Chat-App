@@ -17,14 +17,16 @@ class User: NSObject {
     let email: String
     let id: String
     var profilePic: UIImage?
+    var publicKey: Int!
   
     
     //MARK: Inits
-    init(name: String, email: String, id: String, profilePic: UIImage?) {
+    init(name: String, email: String, id: String, profilePic: UIImage?, publicKey: Int) {
         self.name = name
         self.email = email
         self.id = id
         self.profilePic = profilePic
+        self.publicKey = publicKey
     }
   
     struct loginErrorCode {
@@ -166,26 +168,48 @@ class User: NSObject {
     
     class func registerUser(withName:String,email:String,password:String,phoneNumber: String ,profilePic:UIImage,location: Dictionary<String, Any>,loginHandler: Loginhandler?){
         let sv = UIViewController.displaySpinner(onView: (UIApplication.topViewController()?.view)!)
+        
+        
         Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
             if error == nil{
-                let values: [String: Any] = ["name": withName, "email": email,"phoneNumber": phoneNumber, "location":location]
-                Database.database().reference(fromURL: "https://chatmodule-2a4da.firebaseio.com/").child("users").child((user?.user.uid)!).child("credentials").updateChildValues(values, withCompletionBlock: { (error, _) in
-                    if error == nil {
-                        UIViewController.removeSpinner(spinner: sv)
-                        let userInfo = ["email" : email, "password" : password]
-                        UserDefaults.standard.set(user?.user.uid, forKey: "currentUser")
-                        UserDefaults.standard.set(userInfo, forKey: "userInformation")
+                
+                Database.database().reference(fromURL: "https://chatmodule-2a4da.firebaseio.com/").child("DHParameters").observeSingleEvent(of: .value, with: { (DHparameter) in
+                    if DHparameter.exists(){
                         
-                        loginHandler!(nil)
+                        let dhParameters = DHparameter.value as! [String:Int]
+                        let pValue = dhParameters["pValue"]
+                        let gValue = dhParameters["gValue"]
+                        let deffieHelman = DeffieHelmanKeyExchange()
+                        let privateKey = deffieHelman.genteratePrivateKey(p: pValue!)
+                      
                         
+                        UserDefaults.standard.set(privateKey, forKey: (user?.user.uid)!)
+                        let publicKey = deffieHelman.compute_exp_modulo(primitiveRoot: gValue!, privateKey: privateKey, prime: pValue!)
                         
-                    }
-                    else{
-                        UIViewController.removeSpinner(spinner: sv)
+                        let values: [String: Any] = ["name": withName, "email": email, "publicKey": publicKey]
                         
-                        self.handleErrors(err: error! as NSError, loginHandler: loginHandler!)
+    
+                        Database.database().reference(fromURL: "https://chatmodule-2a4da.firebaseio.com/").child("users").child((user?.user.uid)!).child("credentials").updateChildValues(values, withCompletionBlock: { (error, _) in
+                            if error == nil {
+                                UIViewController.removeSpinner(spinner: sv)
+                                let userInfo = ["email" : email, "password" : password]
+                                UserDefaults.standard.set(user?.user.uid, forKey: "currentUser")
+                                UserDefaults.standard.set(userInfo, forKey: "userInformation")
+                                
+                                loginHandler!(nil)
+                                
+                                
+                            }
+                            else{
+                                UIViewController.removeSpinner(spinner: sv)
+                                
+                                self.handleErrors(err: error! as NSError, loginHandler: loginHandler!)
+                            }
+                        })
                     }
                 })
+                
+                
             }
             else{
                 UIViewController.removeSpinner(spinner: sv)
@@ -232,18 +256,19 @@ class User: NSObject {
             if let credentials = data["credentials"] as? [String: Any] {
                 let name = credentials["name"]!
                 let email = credentials["email"]!
+                let publicKey = credentials["publicKey"]! as! Int
                 if credentials["profilePicLink"] != nil{
                     let link = URL.init(string: credentials["profilePicLink"]! as! String)
                     URLSession.shared.dataTask(with: link!, completionHandler: { (data, response, error) in
                         if error == nil {
                             let profilePic = UIImage.init(data: data!)
-                            let user = User.init(name: name as! String, email: email as! String, id: id, profilePic: profilePic!)
+                            let user = User.init(name: name as! String, email: email as! String, id: id, profilePic: profilePic!, publicKey: publicKey)
                             completion(user)
                         }
                     }).resume()
 
                 }else{
-                    let user = User.init(name: name as! String, email: email as! String, id: id, profilePic: nil)
+                    let user = User.init(name: name as! String, email: email as! String, id: id, profilePic: nil, publicKey: publicKey)
                     completion(user)
                 }
             }
@@ -257,18 +282,20 @@ class User: NSObject {
             if let data = snapshot.value as? [String: Any] {
                 let name = data["name"] as? String
                 let email = data["email"] as? String
+                let publicKey = data["publicKey"] as! Int
                 if data["profilePicLink"] != nil {
                 let pic = data["profilePicLink"] as? String
+               
                 let link = URL.init(string: pic!)
                 URLSession.shared.dataTask(with: link!, completionHandler: { (data, response, error) in
                     if error == nil {
                         let profilePic = UIImage.init(data: data!)
-                        let user = User.init(name: name!, email: email!, id: forUserID, profilePic: profilePic!)
+                        let user = User.init(name: name!, email: email!, id: forUserID, profilePic: profilePic!, publicKey: publicKey)
                         completion(user)
                     }
                 }).resume()
                 }else{
-                    let user = User.init(name: name!, email: email!, id: forUserID, profilePic: nil)
+                    let user = User.init(name: name!, email: email!, id: forUserID, profilePic: nil, publicKey: publicKey)
                     completion(user)
                 }
             }

@@ -13,7 +13,7 @@
         <!--Register-->
         <scene sceneID="B3b-nN-cru">
             <objects>
-                <viewController storyboardIdentifier="Register" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wBl-xk-H6C" customClass="Register" customModule="D3RealTimeChatModule" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Register" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wBl-xk-H6C" customClass="Register" customModule="EndToEndEncryptedChatApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="QYi-Tw-5UE">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="700"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -234,7 +234,7 @@
         <!--Conversations-->
         <scene sceneID="Y0W-HU-mhg">
             <objects>
-                <viewController storyboardIdentifier="Conversations" id="iah-ux-b99" customClass="Conversations" customModule="D3RealTimeChatModule" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Conversations" id="iah-ux-b99" customClass="Conversations" customModule="EndToEndEncryptedChatApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3S2-kB-4JL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -249,7 +249,7 @@
         <!--Login-->
         <scene sceneID="ctx-th-kFb">
             <objects>
-                <viewController storyboardIdentifier="Login" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JJy-2y-XXq" customClass="Login" customModule="D3RealTimeChatModule" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Login" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JJy-2y-XXq" customClass="Login" customModule="EndToEndEncryptedChatApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="IbE-h1-Tt7">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -380,7 +380,7 @@
         <!--Chat-->
         <scene sceneID="JTD-ng-Xx4">
             <objects>
-                <viewController storyboardIdentifier="Chat" title="Chat" useStoryboardIdentifierAsRestorationIdentifier="YES" id="cvN-7f-ugT" customClass="Chat" customModule="D3RealTimeChatModule" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Chat" title="Chat" useStoryboardIdentifierAsRestorationIdentifier="YES" id="cvN-7f-ugT" customClass="Chat" customModule="EndToEndEncryptedChatApp" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="bIM-DT-Zme"/>
                         <viewControllerLayoutGuide type="bottom" id="PDK-gW-psI"/>
@@ -393,7 +393,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Sender" id="5DN-SX-hUa" customClass="SenderCell" customModule="D3RealTimeChatModule" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Sender" id="5DN-SX-hUa" customClass="SenderCell" customModule="EndToEndEncryptedChatApp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="30"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5DN-SX-hUa" id="dmr-pv-3sZ">
@@ -418,7 +418,7 @@
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                     <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                                 </textView>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UbX-Xb-iJy" customClass="RoundedImageView" customModule="D3RealTimeChatModule" customModuleProvider="target">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UbX-Xb-iJy" customClass="RoundedImageView" customModule="EndToEndEncryptedChatApp" customModuleProvider="target">
                                                     <rect key="frame" x="10" y="-12" width="36" height="36"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="36" id="chN-Mu-kde"/>
@@ -444,7 +444,7 @@
                                             <outlet property="profilePic" destination="UbX-Xb-iJy" id="jbS-vn-wxq"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Receiver" id="uDh-cg-mnw" customClass="ReceiverCell" customModule="D3RealTimeChatModule" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Receiver" id="uDh-cg-mnw" customClass="ReceiverCell" customModule="EndToEndEncryptedChatApp" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="58" width="375" height="30"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="uDh-cg-mnw" id="K0S-u1-yMj">
@@ -503,7 +503,7 @@
                     </view>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
-                        <outlet property="bottomConstraint" destination="Coq-Ka-m0O" id="Y8d-RK-2bV"/>
+                        <outlet property="bottomConstraint" destination="4Bv-uM-shd" id="uEv-pi-qm7"/>
                         <outlet property="inputBar" destination="UmV-ZL-6KN" id="Mgd-g8-uN7"/>
                         <outlet property="inputTextField" destination="zef-9B-J8W" id="5co-ht-WoY"/>
                         <outlet property="tableView" destination="4Bv-uM-shd" id="JpN-u9-1S6"/>
@@ -644,7 +644,7 @@
         <!--Contact List-->
         <scene sceneID="Sgf-sB-UaH">
             <objects>
-                <viewController restorationIdentifier="UsersMap" storyboardIdentifier="UsersMap" id="kyZ-7k-2H4" customClass="ContactList" customModule="D3RealTimeChatModule" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="UsersMap" storyboardIdentifier="UsersMap" id="kyZ-7k-2H4" customClass="ContactList" customModule="EndToEndEncryptedChatApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5eK-v5-dlV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

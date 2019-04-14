@@ -54,7 +54,7 @@ class Conversations: UIViewController,UITableViewDelegate,UITableViewDataSource 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let Chat = storyBoard.instantiateViewController(withIdentifier: "Chat") as! Chat
-        Chat.currentUser = self.items[indexPath.row].user
+        Chat.selectedRecipient = self.items[indexPath.row].user
         self.navigationController?.pushViewController(Chat, animated: true)
     }
     
